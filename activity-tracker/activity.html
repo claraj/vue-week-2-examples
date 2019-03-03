@@ -13,7 +13,7 @@
 <body>
     <div id="app">
 
-        <!-- TODO message displaying name of activity -->
+        <!-- TODO change header text to include name of activity -->
         <h1 class="text-center">Time Tracker</h1>
 
         <div id="add-hours" class="card">
@@ -23,24 +23,25 @@
 
                 <form>
 
-                    <!-- TODO show error alert if there is an error -->
+                    <!-- TODO show error alert with list of errors,
+                         if there are errors in the form -->
                     
                     <div class="form-group">
                         <!-- TODO change label message to include name of activity -->
                         <label class="form-label" for="when">When did you do this activity?</label>
-                        <!-- TODO bind/event to app data  -->
+                        <!-- TODO v-model to app data property -->
                         <input id="when" class="form-control" type="date" >
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="howLong">How long did you practice for?</label>
-                        <!-- TODO v-model to app data -->
+                        <!-- TODO v-model to app data property -->
                         <input id="howLong" class="form-control">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="type">What type?</label>
-                        <!-- TODO create a select.  v-model type -->
+                        <!-- TODO create a select. v-model type -->
                         <!-- TODO create one option for each type  -->
                         </select>
                     </div>
@@ -81,7 +82,7 @@
                             <th>Type</th>
                             <th>Digital or traditional?</th>
                         </tr>
-                        <!-- TODO table rows  -->
+                        <!-- TODO display one table row for each activityRecord  -->
                     </table>
                 </div>
             </div>
@@ -105,7 +106,7 @@
 
     <script>
 
-      // TODO vue app here 
+      // TODO create vue app here 
 
     </script>
 

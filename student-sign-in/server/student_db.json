@@ -1,0 +1,28 @@
+{
+  "students": [
+    {
+      "id": 1,
+      "name": "Maria",
+      "starID": "aa1234aa",
+      "present": true
+    },
+    {
+      "id": 2,
+      "name": "Jana",
+      "starID": "bb2345bb",
+      "present": false
+    },
+    {
+      "id": 3,
+      "name": "Omar",
+      "starID": "cc2345cc",
+      "present": false
+    },
+    {
+      "name": "Luka",
+      "starID": "dd7654dd",
+      "present": false,
+      "id": 4
+    }
+  ]
+}

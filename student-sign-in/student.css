@@ -9,3 +9,8 @@
 .fade-enter, .fade-leave-to {
     opacity: 0;
 }
+
+#student-table {
+    max-height: 500px;
+    overflow: scroll;
+}

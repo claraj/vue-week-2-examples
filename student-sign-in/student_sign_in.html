@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 
 <head>
     <title>Student Sign In</title>
@@ -12,24 +12,28 @@
 <body>
     <div id="app">
 
-        <!-- TODO show error alert -->
+        <!-- show error alert -->
+        <div class="alert alert-danger v-show='errors.length > 0">
+            <li v-for="error in errors">{{error}}</li>
+        </div>
 
         <div class="card add-student m-2 p-2">
             <h4 class="card-title">Add new student</h4>
 
             <div class="form-group">
                 <label for="name">Name</label>
-                <!-- TODO v-model -->
-                <input id="name" class="form-control">
+                <!-- v-model; added .trim to eliminate whitespace-->
+                <input id="name" class="form-control" v-model.trim="newStudentName">
             </div>
             <div class="form-group">
                 <label for="starID">Star ID</label>
-                <!-- TODO v-model -->
-                <input id="starID" class="form-control">
+                <!-- v-model -->
+                <input id="starID" class="form-control" v-model.trim="newStarID">
             </div>
 
-            <!-- TODO v-on:click event handler -->
-            <button class="btn btn-primary">Add</button>
+            <!-- v-on:click event handler -->
+<!--            v-on calls whatever is in quotes, so long as it exists in methods-->
+            <button class="btn btn-primary" @click="addStudent">Add</button>
         </div>
 
         <div class="card student-list m-2 p-2">
@@ -46,18 +50,70 @@
                     When the checkbox is checked/unchecked, the student will be signed in/out 
                     Add styles so present and absent student rows have different styles
                      -->
+<!--                    v-for works like a for loop-->
+                    <tr v-for="student in students" v-bind:class="'present-'+student.present">
+                        <td>{{student.name}}</td>
+                        <td>{{student.starID}}</td>
+                        <td> <input type="checkbox" v-model="student.present" v-on:change="checked(student)"></td>
+                    </tr>
                 </table>
             </div>
         </div>
 
         <transition name="fade">
-            <!-- TODO welcome or goodbye message -->
+            <!-- welcome or goodbye message -->
+            <div class="alert alert-success" v-if="seeMessage">{{message}} {{mostRecentSignIn}}</div>
+
         </transition>
     </div>
 
     <script>
-
-        // TODO Create Vue app
+        //Create new vue app
+        let app = new Vue({
+            el:'#app',
+            data: {
+                newStudentName: '',
+                newStarID: '',
+                students: [
+                    { name: 'A. Student', starID: 'aa1234aa', present: false},
+                    { name: 'T. Mullins', starID: 'mn4774jm', present: false},
+                ],
+                errors: [],
+                message: '',
+                mostRecentSignIn: '',
+                seeMessage: false,
+            },
+            methods: {
+                addStudent() {
+                    if (this.newStudentName && this.newStarID) {
+                        let student = {name: this.newStudentName, starID: this.newStarID}
+                        this.students.push(student)
+                        this.students.sort(function (s1, s2){
+                            return s1.name > s2.name ? 1: -1
+                        })
+                        this.newStudentName = ''
+                        this.newStarID = ''
+                    } else if (!this.newStudentName && !this.newStarID){
+                        this.errors.push('Name and starID are both required')
+                    } else if(!this.newStarID){
+                        this.errors.push("StarID is required")
+                    }else{
+                        this.errors.push('Name is required')
+                    }
+                },
+                checked(student) {
+                    this.message = student.present ? 'Welcome, ' : 'Goodbye, '
+                    this.mostRecentSignIn = student.name
+                    this.showMessage()
+                },
+                showMessage() {
+                    this.seeMessage = true
+                    setTimeout( () => {
+                        this.seeMessage = false
+                    }, 3000)
+                }
+            }
+        })
 
     </script>
 

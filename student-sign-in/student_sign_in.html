@@ -3,10 +3,10 @@
 
 <head>
     <title>Student Sign In</title>
-    <script src="https://unpkg.com/vue@2.6.7/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue@2.6.11/dist/vue.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
-    <link rel="stylesheet" href="student.css" type="text/css">
+    <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 
 <body>
@@ -17,17 +17,17 @@
         </div>
 
         <div class="card add-student m-2 p-2">
-                <h4 class="card-title">Add new student</h4>
+            <h4 class="card-title">Add new student</h4>
 
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input id="name" class="form-control" v-model.trim="newStudentName">
-                </div>
-                <div class="form-group">
-                    <label for="starID">Star ID</label>
-                    <input id="starID" class="form-control" v-model.trim="newStarID">
-                </div>
-                <button class="btn btn-primary" v-on:click="addStudent">Add</button>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input id="name" class="form-control" v-model.trim="newStudentName">
+            </div>
+            <div class="form-group">
+                <label for="starID">Star ID</label>
+                <input id="starID" class="form-control" v-model.trim="newStarID">
+            </div>
+            <button class="btn btn-primary" v-on:click="addStudent">Add</button>
         </div>
 
         <div class="card student-list m-2 p-2">
@@ -48,12 +48,13 @@
             </div>
         </div>
 
-        <transition name="fade">
-            <div class="alert alert-success" v-if="seeMessage">{{message}} {{mostRecentSignIn}}</div>
-        </transition>
+        <div class="alert alert-success" v-if="seeMessage">{{message}} {{mostRecentSignIn}}</div>
+        
     </div>
 
     <script>
+
+        let timeout // A reference to the timeout ID that's counting down to remove the message  
 
         let app = new Vue({
             el: "#app",
@@ -72,7 +73,6 @@
                     if (this.newStudentName && this.newStarID) {
                         let student = { name: this.newStudentName, starID: this.newStarID, present: false }
                         this.students.push(student)
-                        this.students.sort(function (s1, s2) { return s1.name > s2.name ? 1 : -1 })
                         this.newStudentName = ''
                         this.newStarID = ''
                     } else {
@@ -85,8 +85,9 @@
                     this.showMessage()
                 },
                 showMessage() {
+                    clearTimeout(timeout)
                     this.seeMessage = true
-                    setTimeout(() => {
+                    timeout = setTimeout(() => {
                         this.seeMessage = false
                     }, 3000)
                 }

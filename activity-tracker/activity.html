@@ -3,11 +3,11 @@
 
 <head>
     <title>Practice Tracker</title>
-    <script src="https://unpkg.com/vue@2.6.7/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue@2.6.11/dist/vue.js"></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
         crossorigin="anonymous">
-    <link rel="stylesheet" href="practice_style.css" type="text/css">
+    <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 
 <body>
@@ -28,12 +28,12 @@
 
                     <div class="form-group">
                         <label class="form-label" for="when">When did you {{ activity | lowercase }}?</label>
-                        <input id="when" class="form-control" type="date" v-model.lazy="when">
+                        <input id="when" class="form-control" type="date" v-model="when">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="howLong">How long did you practice for?</label>
-                        <input id="howLong" class="form-control" v-model.number.lazy="howLong">
+                        <input id="howLong" class="form-control" v-model.number="howLong">
                     </div>
 
                     <div class="form-group">
@@ -43,16 +43,20 @@
                         </select>
                     </div>
 
-                    <div class="form-check-inline">
-                        <input id="v2" class="form-check-input" type="radio" v-bind:value="traditional" v-model="digitalTraditional">
-                        <label class="form-check-label" for="v1">Traditional</label>
-                    </div>
+                    <div class="form-group">                        
+                        <label class="form-label" for="type">What style?</label>
+                    
+                        <div class="form-check">
+                            <input id="s1" class="form-check-input" type="radio" v-bind:value="styles.traditional" v-model="style">
+                            <label class="form-check-label" for="s1">{{ styles.traditional}}</label>
+                        </div>
 
-                    <div class="form-check-inline">
-                        <input id="v1" class="form-check-input" type="radio" v-bind:value="digital" v-model="digitalTraditional">
-                        <label class="form-check-label" for="v1">Digital</label>
+                        <div class="form-check">
+                            <input id="s2" class="form-check-input" type="radio" v-bind:value="styles.digital" v-model="style">
+                            <label class="form-check-label" for="s2">{{ styles.digital }}</label>
+                        </div>
                     </div>
-
+    
                     <div>
                         <button class="btn btn-primary mt-2" type="button" v-on:click="submit">Add record</button>
                     </div>
@@ -73,13 +77,13 @@
                             <th>When</th>
                             <th>How long?</th>
                             <th>Type</th>
-                            <th>Digital or traditional?</th>
+                            <th>Style</th>
                         </tr>
                         <tr v-for="record in activityRecords">
                             <td>{{ record.when | shortDateFormat }}</td>
                             <td>{{ record.howLong }}</td>
                             <td>{{ record.type }}</td>
-                            <td>{{ record.digitalTraditional }}</td>
+                            <td>{{ record.style }}</td>
                         </tr>
                     </table>
                 </div>
@@ -92,12 +96,8 @@
 
             <div class="card-body">
                 <!-- Computed property -->
-                <p>You have practiced a total of {{ totalHours }} hours, broken down as follows:</p>
+                <p>You have practiced a total of {{ totalHours }} hour(s)</p>
                 
-                <!-- total for each type  -->
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item" v-for="hours, type in totalHoursByType">{{ type }}: {{ hours }}</li>
-                </ul>
             </div>
         </div>
 
@@ -110,13 +110,14 @@
             data: {
                 activity: 'Practice Art',  // If you like, replace in your own activity name e.g. studying, running, playing video games.... 
                 when: '',
-                howLong: 1,
-                type: 'sketching',
-                digitalTraditional: 'traditional',   // you may wish to rename this 
+                howLong: 0,
+                type: '',
+                style: '',   
                 activityRecords: [],
-                types: ['sketching', 'drawing', 'painting'],    // replace with appropriate options for your activity e.g. for video game, ['PC', 'PlayStation', 'Xbox' ]
-                digital: 'digital',          // on a computer, tablet                // replace with appropriate options for your activity e.g. for video games, single player and multi player 
-                traditional: 'traditional',   // painting, drawing etc. on paper
+                types: ['Sketching', 'Drawing', 'Painting'],    // replace with appropriate options for your activity e.g. for video game, ['PC', 'PlayStation', 'Xbox' ]
+                styles: {
+                    digital: 'Digital',           // on a computer, tablet                // replace with appropriate options for your activity e.g. for video games, single player and multi player 
+                    traditional: 'Traditional'},   // painting, drawing etc. on paper
                 errors: []
             },
             methods: {
@@ -131,8 +132,22 @@
                         this.errors.push('The number of hours must be a number greater than zero.')
                     }
 
+                    if (!this.type) {
+                        this.errors.push('Select a type')
+                    }
+
+                    if (!this.style) {
+                        this.errors.push('Select a style')
+                    }
+
                     if (this.errors.length == 0) {
-                        let newActivityRecord = { when: this.whenLocal, howLong: this.howLong, type: this.type, digitalTraditional: this.digitalTraditional }
+                        let newActivityRecord = { 
+                            when: this.whenLocal, 
+                            howLong: this.howLong, 
+                            type: this.type, 
+                            style: this.style 
+                        }
+
                         this.activityRecords.push(newActivityRecord)
                         this.activityRecords.sort(function (r1, r2) { return r1.when.getTime() - r2.when.getTime() })
                     }
@@ -140,6 +155,7 @@
             }, computed: {
                 whenLocal() {
                     let date = new Date(this.when)
+                    console.log(date)
                     let timestamp = date.getTime() + (date.getTimezoneOffset() * 60 * 1000)
                     let localDate = new Date(timestamp)
                     return localDate
@@ -152,17 +168,6 @@
                         }, 0)
                     }
                     return total
-                },
-                totalHoursByType() {
-                    let hoursByType = {}
-                    let self = this
-                    this.types.forEach(function (type) {
-                        let totalForType = self.activityRecords
-                            .filter(function (record) { return record.type === type })
-                            .reduce(function (accumulator, current) { return accumulator + current.howLong }, 0)
-                        hoursByType[type] = totalForType
-                    })
-                    return hoursByType
                 }
             }, filters: {
                 lowercase(string) {
